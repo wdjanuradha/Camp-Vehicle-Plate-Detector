@@ -1,145 +1,274 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Camp Vehicle Plate Demo</title>
+  <title>AI Guardian - Vehicle Plate Scanner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
   <style>
+    /* --- MODERN MILITARY THEME --- */
+    :root{
+      --bg-primary: #050a05;       /* Deep Camo Black */
+      --bg-secondary: #0f1f15;     /* Dark Jungle Green */
+      --bg-card: rgba(20, 40, 25, 0.9); /* Transparent Tactical Green */
+      
+      --accent-main: #4caf50;      /* Tactical Green */
+      --accent-gold: #ffb300;      /* Rank/Alert Gold */
+      --accent-danger: #ff3333;    /* Kill/Danger Red */
+      
+      --text-primary: #e0e0e0;     /* Off-white */
+      --text-muted: #8da691;       /* Faded Green text */
+      --border-color: #2e5c3e;     /* Border Green */
+      
+      --font-head: 'Black Ops One', cursive;
+      --font-body: 'Share Tech Mono', monospace;
+      --font-ui: 'Rajdhani', sans-serif;
+    }
+
     *{box-sizing:border-box;margin:0;padding:0}
     body{
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:#0f172a; color:#f1f5f9; padding:16px;
+      font-family: var(--font-body);
+      background-color: var(--bg-primary);
+      background-image: 
+        linear-gradient(rgba(0, 20, 0, 0.8), rgba(0, 10, 0, 0.9)),
+        url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+      color: var(--text-primary);
+      min-height:100vh;
+      padding:20px;
+      overflow-x: hidden;
     }
-    .container{max-width:1100px;margin:0 auto}
+
+    /* Scanline Effect */
+    body::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 999;
+      background-size: 100% 2px, 3px 100%;
+      pointer-events: none;
+    }
+
+    .container{max-width:1100px;margin:0 auto; position: relative; z-index: 10;}
+
+    /* Header Design */
     .header{
-      background:linear-gradient(135deg,#3b82f6,#8b5cf6);
-      padding:18px;border-radius:14px;margin-bottom:16px;
-      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+      background: linear-gradient(90deg, var(--bg-secondary) 0%, #1a3320 100%);
+      border-left: 5px solid var(--accent-gold);
+      border-bottom: 2px solid var(--border-color);
+      padding:25px;
+      margin-bottom:25px;
+      display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap;
+      box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
     }
-    .header h1{font-size:1.4rem}
+    .header h1{
+      font-family: var(--font-head);
+      font-size: 2em;
+      color: var(--accent-main);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 5px var(--accent-main);
+    }
+    .header .small{
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 5px;
+    }
+
     .badge{
-      padding:8px 12px;border-radius:10px;font-weight:700;
-      background:rgba(255,255,255,.18);
+      padding:8px 15px; border-radius:10px; font-weight:700;
+      background: rgba(0,0,0,0.6); border: 1px solid var(--border-color);
+      color: var(--accent-danger); font-family: var(--font-body);
+      text-transform: uppercase; letter-spacing: 1px;
     }
-    .grid{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+    .badge.on { color: var(--accent-main); border-color: var(--accent-main); }
+
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
     @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+
+    /* Card Design */
     .card{
-      background:#1e293b;border:1px solid #475569;border-radius:14px;padding:16px;
-      box-shadow:0 10px 28px rgba(0,0,0,.25);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius:0;
+      padding:20px;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     }
-    .card h2{font-size:1.1rem;margin-bottom:10px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-    label{display:block;font-size:.9rem;color:#cbd5e1;margin-bottom:6px}
+    .card::after {
+      content: ""; position: absolute; top: -1px; right: -1px;
+      width: 20px; height: 20px;
+      border-top: 2px solid var(--accent-gold);
+      border-right: 2px solid var(--accent-gold);
+    }
+    .card h2{
+      margin-bottom:20px; font-size:1.3rem; display:flex; align-items:center; gap:10px;
+      color: var(--accent-gold); font-family: var(--font-ui); text-transform: uppercase;
+      border-bottom: 1px dashed var(--border-color); padding-bottom: 10px;
+    }
+
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px}
+    label{display:block;font-size:.85rem;color:var(--text-muted);margin-bottom:8px; font-family: var(--font-ui); text-transform: uppercase; font-weight: bold;}
+    
     input,select{
-      width:100%;padding:10px;border-radius:10px;border:1px solid #475569;
-      background:#334155;color:#f1f5f9;font-size:1rem;
+      width:100%;padding:12px; border:1px solid var(--border-color);
+      background: rgba(0,0,0,0.6); color: var(--accent-main);
+      font-family: var(--font-body); outline: none;
     }
-    .btns{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+    input:focus, select:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 5px rgba(255, 179, 0, 0.3);
+    }
+
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+    
+    /* Buttons */
     button{
-      padding:10px 16px;border:0;border-radius:10px;font-weight:800;cursor:pointer;
-      background:#334155;color:#f1f5f9;
+      padding:12px 20px; border:none; cursor:pointer; transition:.2s; font-size:.95em;
+      font-family: var(--font-head); text-transform: uppercase; letter-spacing: 1px;
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
     }
-    .primary{background:linear-gradient(135deg,#10b981,#059669)}
-    .danger{background:linear-gradient(135deg,#ef4444,#dc2626)}
-    button:disabled{opacity:.5;cursor:not-allowed}
+    .primary{background: var(--accent-main); color: #000;}
+    .primary:hover{background: #388e3c; box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);}
+    
+    .danger{background: var(--accent-danger); color: #fff;}
+    .danger:hover{background: #d32f2f; box-shadow: 0 0 15px rgba(244, 67, 54, 0.6);}
+    
+    .secondary{background: transparent; border: 1px solid var(--text-muted); color: var(--text-primary);}
+    .secondary:hover{background: rgba(255,255,255,0.1); border-color: var(--accent-main); color: var(--accent-main);}
+    
+    .scan-btn{background: var(--accent-gold); color: #000;}
+    .scan-btn:hover{background: #ffa000; box-shadow: 0 0 15px rgba(255, 179, 0, 0.6);}
+    
+    button:disabled{opacity:.4;cursor:not-allowed}
+
+    /* Video Container */
     .video-wrap{
-      position:relative; background:#000; border-radius:14px; overflow:hidden;
-      border:1px solid #475569;
+      position:relative; background:#000; overflow:hidden;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      margin-top: 15px;
+    }
+    .video-wrap::before {
+      content: ""; position: absolute; top: 10px; left: 10px; width: 30px; height: 30px;
+      border-top: 3px solid var(--accent-main); border-left: 3px solid var(--accent-main); z-index: 5;
+    }
+    .video-wrap::after {
+      content: ""; position: absolute; bottom: 10px; right: 10px; width: 30px; height: 30px;
+      border-bottom: 3px solid var(--accent-main); border-right: 3px solid var(--accent-main); z-index: 5;
     }
     video, canvas{width:100%; height:auto; display:block}
     canvas{position:absolute; top:0; left:0}
+    
     .overlay{
       position:absolute;top:12px;left:12px;
-      background:rgba(0,0,0,.65);padding:8px 10px;border-radius:10px;
-      font-size:.9rem
+      background:rgba(0,0,0,0.7); border: 1px solid var(--accent-main);
+      color: var(--accent-main);
+      padding:5px 10px; font-family: var(--font-body); font-size: 0.8em;
+      z-index: 10;
     }
+
+    /* Alerts */
     .alert{
-      margin-top:10px;padding:10px 12px;border-radius:12px;
-      border-left:4px solid #3b82f6; background:rgba(59,130,246,.18);
+      margin-top:15px;padding:15px; display:flex; align-items:center; gap:10px;
+      background: rgba(0, 20, 10, 0.9); border: 1px solid var(--accent-main);
+      color: var(--accent-main); font-family: var(--font-body);
     }
-    .alert.warn{border-left-color:#f59e0b;background:rgba(245,158,11,.18)}
-    .alert.bad{border-left-color:#ef4444;background:rgba(239,68,68,.18)}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace}
+    .alert.warn{border-color:var(--accent-gold); color:var(--accent-gold)}
+    .alert.bad{border-color:var(--accent-danger); color:var(--accent-danger)}
+
+    .mono{font-family: var(--font-body); color: var(--accent-gold);}
+    
+    /* Tables */
     table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:10px;border-bottom:1px solid #475569;text-align:left}
-    th{background:#334155}
-    .small{color:#94a3b8;font-size:.9rem}
+    th,td{padding:12px;border-bottom:1px solid #1a3320;text-align:left; font-family: var(--font-body);}
+    th{background: rgba(76, 175, 80, 0.1); border-bottom: 2px solid var(--border-color); color: var(--accent-gold); font-family: var(--font-ui); text-transform: uppercase;}
+    tbody tr:hover{background:rgba(76, 175, 80, 0.05);}
+    
+    .small{color:var(--text-muted);font-size:.85rem}
+    
+    /* Badges/Pills */
     .pill{
-      display:inline-block;padding:4px 10px;border-radius:999px;font-weight:800;font-size:.85rem
+      display:inline-block;padding:4px 10px; font-size:.75rem; text-transform: uppercase; border: 1px solid transparent;
+      font-family: var(--font-body);
     }
-    .ok{background:rgba(16,185,129,.18);color:#10b981}
-    .rej{background:rgba(239,68,68,.18);color:#ef4444}
+    .ok{background:rgba(76, 175, 80, 0.2); border-color: var(--accent-main); color:var(--accent-main)}
+    .rej{background:rgba(244, 67, 54, 0.2); border-color: var(--accent-danger); color:var(--accent-danger)}
   </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
     <div>
-      <h1>🚗 Camp Vehicle Plate Detector (Open Demo)</h1>
-      <div class="small">Separate vehicle camera + OCR + demo logs (no login, no DB).</div>
+      <h1>🛡️ AI Guardian - Vehicle Scan</h1>
+      <div class="small">ස්වයංක්‍රීය අංක තහඩු හඳුනාගැනීම (OCR TACTICAL UNIT)</div>
     </div>
-    <div class="badge" id="statusBadge">🔴 Camera OFF</div>
+    <div class="badge" id="statusBadge">🔴 OFFLINE</div>
   </div>
 
   <div class="grid">
     <div class="card">
-      <h2>🎥 Vehicle Camera</h2>
+      <h2>🎥 කැමරා පද්ධතිය (OPTICAL SENSOR)</h2>
 
       <div class="row">
         <div>
-          <label>Gate</label>
+          <label>ගේට්ටුව (GATE)</label>
           <input id="gateName" value="Main Gate" />
         </div>
         <div>
-          <label>Event Type</label>
+          <label>ක්‍රියාව (ACTION)</label>
           <select id="eventType">
-            <option value="IN">IN</option>
-            <option value="OUT">OUT</option>
+            <option value="IN">ඇතුල්වීම (ENTRY)</option>
+            <option value="OUT">පිටවීම (EXIT)</option>
           </select>
         </div>
       </div>
 
       <div class="btns">
-        <button id="startBtn" class="primary">Start Vehicle Camera</button>
-        <button id="stopBtn" class="danger" disabled>Stop</button>
-        <button id="scanBtn">Scan Now</button>
-        <button id="clearBtn">Clear Logs</button>
+        <button id="startBtn" class="primary">🎥 කැමරාව අරඹන්න</button>
+        <button id="stopBtn" class="danger" disabled>⏹️ නවත්වන්න</button>
+        <button id="scanBtn" class="scan-btn">🔎 ස්කෑන් කරන්න</button>
+        <button id="clearBtn" class="secondary">🧹 වාර්තා මකන්න</button>
       </div>
 
       <div class="video-wrap">
         <video id="video" autoplay muted playsinline></video>
         <canvas id="canvas"></canvas>
-        <div class="overlay" id="overlayText">Ready</div>
+        <div class="overlay" id="overlayText">SYSTEM READY</div>
       </div>
 
       <div id="msg" class="alert">
-        Tip: Keep the number plate close and steady. Good lighting improves accuracy.
+        උපදෙස්: අංක තහඩුව කැමරාවට පැහැදිලිව පෙනෙන සේ තබාගන්න. ආලෝකය වැදගත් වේ.
       </div>
     </div>
 
     <div class="card">
-      <h2>📌 Detected Result</h2>
-      <div id="result" style="padding:10px;border:1px dashed #475569;border-radius:12px;">
-        <div class="small">No result yet.</div>
+      <h2>📌 ස්කෑන් ප්‍රතිඵල (RESULTS)</h2>
+      <div id="result" style="padding:15px; border:1px dashed var(--border-color); background: rgba(0,0,0,0.5);">
+        <div class="small">තවම දත්ත නැත (NO DATA)</div>
       </div>
 
-      <h2 style="margin-top:14px;">🧾 Demo Logs</h2>
-      <div class="small">Stored in this browser only (localStorage).</div>
+      <h2 style="margin-top:25px;">🧾 දෛනික වාර්තා (LOCAL LOGS)</h2>
+      <div class="small">මෙම දත්ත ඔබගේ උපාංගයේ පමණක් සුරැකේ.</div>
 
-      <div style="overflow:auto; max-height: 360px;">
+      <div style="overflow:auto; max-height: 360px; margin-top:10px;">
         <table>
           <thead>
             <tr>
               <th>#</th>
-              <th>Plate</th>
-              <th>Gate</th>
+              <th>අංක තහඩුව</th>
+              <th>ගේට්ටුව</th>
               <th>IN/OUT</th>
-              <th>Status</th>
-              <th>Time</th>
+              <th>තත්ත්වය</th>
+              <th>වේලාව</th>
             </tr>
           </thead>
           <tbody id="logBody">
-            <tr><td colspan="6" class="small" style="padding:14px;">No logs yet.</td></tr>
+            <tr><td colspan="6" class="small" style="padding:14px; text-align:center;">තවම වාර්තා නොමැත.</td></tr>
           </tbody>
         </table>
       </div>
@@ -147,7 +276,6 @@
   </div>
 </div>
 
-<!-- OCR -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
@@ -176,7 +304,7 @@
   const clearBtn = document.getElementById("clearBtn");
 
   function nowText(){
-    return new Date().toLocaleString();
+    return new Date().toLocaleString("si-LK");
   }
 
   function setAlert(text, type="info"){
@@ -206,7 +334,7 @@
   function renderLogs(){
     const logs = loadLogs();
     if(!logs.length){
-      logBody.innerHTML = `<tr><td colspan="6" class="small" style="padding:14px;">No logs yet.</td></tr>`;
+      logBody.innerHTML = `<tr><td colspan="6" class="small" style="padding:14px; text-align:center;">තවම වාර්තා නොමැත (NO LOGS YET).</td></tr>`;
       return;
     }
     logBody.innerHTML = logs.map((l,i)=>`
@@ -216,8 +344,8 @@
         <td>${l.gate}</td>
         <td>${l.eventType}</td>
         <td>${l.status === "approved"
-          ? `<span class="pill ok">APPROVED</span>`
-          : `<span class="pill rej">REJECTED</span>`}</td>
+          ? `<span class="pill ok">CLEARED</span>`
+          : `<span class="pill rej">DENIED</span>`}</td>
         <td>${l.time}</td>
       </tr>
     `).join("");
@@ -242,12 +370,13 @@
       startBtn.disabled = true;
       stopBtn.disabled = false;
 
-      statusBadge.textContent = "🟢 Camera ON";
-      overlayText.textContent = "Camera running";
-      setAlert("Camera started. Press 'Scan Now' to read the number plate.", "info");
+      statusBadge.textContent = "🟢 ONLINE";
+      statusBadge.classList.add("on");
+      overlayText.textContent = "OPTICS ONLINE";
+      setAlert("කැමරාව ආරම්භ විය. අංකය හඳුනාගැනීමට 'ස්කෑන් කරන්න' ඔබන්න.", "info");
     }catch(e){
       console.error(e);
-      setAlert("Camera access failed. Check permissions and try Safari/Chrome.", "bad");
+      setAlert("කැමරාව ක්‍රියාත්මක කළ නොහැක. Permissions පරීක්ෂා කරන්න.", "bad");
     }
   };
 
@@ -259,9 +388,11 @@
     video.srcObject = null;
     startBtn.disabled = false;
     stopBtn.disabled = true;
-    statusBadge.textContent = "🔴 Camera OFF";
-    overlayText.textContent = "Ready";
-    setAlert("Camera stopped.", "info");
+    
+    statusBadge.textContent = "🔴 OFFLINE";
+    statusBadge.classList.remove("on");
+    overlayText.textContent = "STANDBY";
+    setAlert("කැමරාව අක්‍රිය කරන ලදී.", "info");
   };
 
   // Resize canvas when video is ready
@@ -273,14 +404,14 @@
   // ====== OCR Scan ======
   scanBtn.onclick = async () => {
     if(!stream){
-      setAlert("Start the vehicle camera first.", "warn");
+      setAlert("කරුණාකර පළමුව කැමරාව ආරම්භ කරන්න.", "warn");
       return;
     }
     if(scanLock) return;
     scanLock = true;
 
-    overlayText.textContent = "Scanning...";
-    setAlert("Scanning... hold the plate steady.", "info");
+    overlayText.textContent = "SCANNING...";
+    setAlert("ස්කෑන් වෙමින් පවතී... කැමරාව නොසොල්වා තබාගන්න.", "info");
 
     // draw current frame
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -292,9 +423,9 @@
 
       // Simple sanity: require some length
       if(plate.length < 5){
-        result.innerHTML = `<div class="small">No clear plate found. Try closer / better lighting.</div>`;
-        overlayText.textContent = "No plate";
-        setAlert("No clear plate detected. Try again (closer and steady).", "warn");
+        result.innerHTML = `<div class="small" style="color:var(--accent-danger)">පැහැදිලි අංක තහඩුවක් හඳුනාගැනීමට නොහැකි විය.</div>`;
+        overlayText.textContent = "NO PLATE";
+        setAlert("පැහැදිලි අංක තහඩුවක් හඳුනාගැනීමට නොහැකි විය. නැවත උත්සාහ කරන්න.", "warn");
         scanLock = false;
         return;
       }
@@ -308,16 +439,16 @@
       // Watchlist escalation
       if(WATCHLIST_PLATES.has(plate)){
         status = "rejected";
-        setAlert(`🚨 WATCHLIST vehicle detected: ${plate}`, "bad");
+        setAlert(`🚨 අවධානයට ලක්වූ වාහනයක් (WATCHLIST DETECTED): ${plate}`, "bad");
       }else if(status === "approved"){
-        setAlert(`✅ Approved vehicle: ${plate}`, "info");
+        setAlert(`✅ අනුමත වාහනයක් (ACCESS GRANTED): ${plate}`, "info");
       }else{
-        setAlert(`⚠️ Unknown/Rejected vehicle: ${plate}`, "warn");
+        setAlert(`⚠️ හඳුනානොගත් වාහනයක් (UNKNOWN VEHICLE): ${plate}`, "warn");
       }
 
       result.innerHTML = `
-        <div><b>Detected Plate:</b> <span class="mono">${plate}</span></div>
-        <div class="small" style="margin-top:6px;">Raw OCR: <span class="mono">${normalizePlate(raw).slice(0,60)}</span></div>
+        <div style="font-size: 1.1em; color: var(--text-primary);"><b>හඳුනාගත් අංකය:</b> <span class="mono" style="font-size: 1.2em;">${plate}</span></div>
+        <div class="small" style="margin-top:8px;">මූලික දත්ත (RAW OCR): <span class="mono">${normalizePlate(raw).slice(0,60)}</span></div>
       `;
 
       addLog({
@@ -325,21 +456,21 @@
         time: nowText()
       });
 
-      overlayText.textContent = "Done";
+      overlayText.textContent = "SCAN COMPLETE";
     }catch(e){
       console.error(e);
-      setAlert("OCR failed. Try again or use a stronger device (PC/Android).", "bad");
-      overlayText.textContent = "Error";
+      setAlert("OCR දෝෂයකි. නැවත උත්සාහ කරන්න.", "bad");
+      overlayText.textContent = "ERROR";
     }finally{
       scanLock = false;
     }
   };
 
   clearBtn.onclick = () => {
-    if(confirm("Clear demo logs on this device?")){
+    if(confirm("මෙම උපාංගයේ ඇති සියලුම වාර්තා මකා දැමීමට අවශ්‍යද?")){
       localStorage.removeItem("veh_demo_logs");
       renderLogs();
-      setAlert("Demo logs cleared.", "info");
+      setAlert("සියලු වාර්තා මකා දමන ලදී (LOGS CLEARED).", "info");
     }
   };
 
