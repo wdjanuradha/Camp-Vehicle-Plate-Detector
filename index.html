@@ -1,1 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Camp Vehicle Plate Demo</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:#0f172a; color:#f1f5f9; padding:16px;
+    }
+    .container{max-width:1100px;margin:0 auto}
+    .header{
+      background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+      padding:18px;border-radius:14px;margin-bottom:16px;
+      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    }
+    .header h1{font-size:1.4rem}
+    .badge{
+      padding:8px 12px;border-radius:10px;font-weight:700;
+      background:rgba(255,255,255,.18);
+    }
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+    .card{
+      background:#1e293b;border:1px solid #475569;border-radius:14px;padding:16px;
+      box-shadow:0 10px 28px rgba(0,0,0,.25);
+    }
+    .card h2{font-size:1.1rem;margin-bottom:10px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    label{display:block;font-size:.9rem;color:#cbd5e1;margin-bottom:6px}
+    input,select{
+      width:100%;padding:10px;border-radius:10px;border:1px solid #475569;
+      background:#334155;color:#f1f5f9;font-size:1rem;
+    }
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+    button{
+      padding:10px 16px;border:0;border-radius:10px;font-weight:800;cursor:pointer;
+      background:#334155;color:#f1f5f9;
+    }
+    .primary{background:linear-gradient(135deg,#10b981,#059669)}
+    .danger{background:linear-gradient(135deg,#ef4444,#dc2626)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .video-wrap{
+      position:relative; background:#000; border-radius:14px; overflow:hidden;
+      border:1px solid #475569;
+    }
+    video, canvas{width:100%; height:auto; display:block}
+    canvas{position:absolute; top:0; left:0}
+    .overlay{
+      position:absolute;top:12px;left:12px;
+      background:rgba(0,0,0,.65);padding:8px 10px;border-radius:10px;
+      font-size:.9rem
+    }
+    .alert{
+      margin-top:10px;padding:10px 12px;border-radius:12px;
+      border-left:4px solid #3b82f6; background:rgba(59,130,246,.18);
+    }
+    .alert.warn{border-left-color:#f59e0b;background:rgba(245,158,11,.18)}
+    .alert.bad{border-left-color:#ef4444;background:rgba(239,68,68,.18)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:10px;border-bottom:1px solid #475569;text-align:left}
+    th{background:#334155}
+    .small{color:#94a3b8;font-size:.9rem}
+    .pill{
+      display:inline-block;padding:4px 10px;border-radius:999px;font-weight:800;font-size:.85rem
+    }
+    .ok{background:rgba(16,185,129,.18);color:#10b981}
+    .rej{background:rgba(239,68,68,.18);color:#ef4444}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>🚗 Camp Vehicle Plate Detector (Open Demo)</h1>
+      <div class="small">Separate vehicle camera + OCR + demo logs (no login, no DB).</div>
+    </div>
+    <div class="badge" id="statusBadge">🔴 Camera OFF</div>
+  </div>
 
+  <div class="grid">
+    <div class="card">
+      <h2>🎥 Vehicle Camera</h2>
+
+      <div class="row">
+        <div>
+          <label>Gate</label>
+          <input id="gateName" value="Main Gate" />
+        </div>
+        <div>
+          <label>Event Type</label>
+          <select id="eventType">
+            <option value="IN">IN</option>
+            <option value="OUT">OUT</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button id="startBtn" class="primary">Start Vehicle Camera</button>
+        <button id="stopBtn" class="danger" disabled>Stop</button>
+        <button id="scanBtn">Scan Now</button>
+        <button id="clearBtn">Clear Logs</button>
+      </div>
+
+      <div class="video-wrap">
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div class="overlay" id="overlayText">Ready</div>
+      </div>
+
+      <div id="msg" class="alert">
+        Tip: Keep the number plate close and steady. Good lighting improves accuracy.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📌 Detected Result</h2>
+      <div id="result" style="padding:10px;border:1px dashed #475569;border-radius:12px;">
+        <div class="small">No result yet.</div>
+      </div>
+
+      <h2 style="margin-top:14px;">🧾 Demo Logs</h2>
+      <div class="small">Stored in this browser only (localStorage).</div>
+
+      <div style="overflow:auto; max-height: 360px;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Plate</th>
+              <th>Gate</th>
+              <th>IN/OUT</th>
+              <th>Status</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="logBody">
+            <tr><td colspan="6" class="small" style="padding:14px;">No logs yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OCR -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<script>
+  // ====== DEMO "REGISTRY" (edit these for approved / watchlist) ======
+  // You can add more plates here.
+  const APPROVED_PLATES = new Set(["WP-1234", "CP-7788", "NP-9001"]);
+  const WATCHLIST_PLATES = new Set(["WP-0007", "SP-6666"]);
+
+  // ====== State ======
+  let stream = null;
+  let scanLock = false;
+
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const overlayText = document.getElementById("overlayText");
+  const statusBadge = document.getElementById("statusBadge");
+  const msg = document.getElementById("msg");
+  const result = document.getElementById("result");
+  const logBody = document.getElementById("logBody");
+
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn = document.getElementById("stopBtn");
+  const scanBtn = document.getElementById("scanBtn");
+  const clearBtn = document.getElementById("clearBtn");
+
+  function nowText(){
+    return new Date().toLocaleString();
+  }
+
+  function setAlert(text, type="info"){
+    msg.className = "alert" + (type==="warn" ? " warn" : type==="bad" ? " bad" : "");
+    msg.textContent = text;
+  }
+
+  function normalizePlate(text){
+    // Keep only letters/digits/hyphen, uppercase
+    return (text || "")
+      .toUpperCase()
+      .replace(/[^A-Z0-9-]/g, "")
+      .replace(/--+/g,"-")
+      .trim();
+  }
+
+  function loadLogs(){
+    try{
+      return JSON.parse(localStorage.getItem("veh_demo_logs") || "[]");
+    }catch{ return []; }
+  }
+
+  function saveLogs(logs){
+    localStorage.setItem("veh_demo_logs", JSON.stringify(logs));
+  }
+
+  function renderLogs(){
+    const logs = loadLogs();
+    if(!logs.length){
+      logBody.innerHTML = `<tr><td colspan="6" class="small" style="padding:14px;">No logs yet.</td></tr>`;
+      return;
+    }
+    logBody.innerHTML = logs.map((l,i)=>`
+      <tr>
+        <td>${i+1}</td>
+        <td class="mono">${l.plate}</td>
+        <td>${l.gate}</td>
+        <td>${l.eventType}</td>
+        <td>${l.status === "approved"
+          ? `<span class="pill ok">APPROVED</span>`
+          : `<span class="pill rej">REJECTED</span>`}</td>
+        <td>${l.time}</td>
+      </tr>
+    `).join("");
+  }
+
+  function addLog(entry){
+    const logs = loadLogs();
+    logs.unshift(entry);
+    saveLogs(logs.slice(0,200)); // keep last 200
+    renderLogs();
+  }
+
+  // ====== Camera ======
+  startBtn.onclick = async () => {
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+      });
+      video.srcObject = stream;
+
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+
+      statusBadge.textContent = "🟢 Camera ON";
+      overlayText.textContent = "Camera running";
+      setAlert("Camera started. Press 'Scan Now' to read the number plate.", "info");
+    }catch(e){
+      console.error(e);
+      setAlert("Camera access failed. Check permissions and try Safari/Chrome.", "bad");
+    }
+  };
+
+  stopBtn.onclick = () => {
+    if(stream){
+      stream.getTracks().forEach(t=>t.stop());
+      stream = null;
+    }
+    video.srcObject = null;
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    statusBadge.textContent = "🔴 Camera OFF";
+    overlayText.textContent = "Ready";
+    setAlert("Camera stopped.", "info");
+  };
+
+  // Resize canvas when video is ready
+  video.addEventListener("loadeddata", () => {
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+  });
+
+  // ====== OCR Scan ======
+  scanBtn.onclick = async () => {
+    if(!stream){
+      setAlert("Start the vehicle camera first.", "warn");
+      return;
+    }
+    if(scanLock) return;
+    scanLock = true;
+
+    overlayText.textContent = "Scanning...";
+    setAlert("Scanning... hold the plate steady.", "info");
+
+    // draw current frame
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    try{
+      const { data } = await Tesseract.recognize(canvas, "eng", { logger: ()=>{} });
+      const raw = data.text || "";
+      const plate = normalizePlate(raw);
+
+      // Simple sanity: require some length
+      if(plate.length < 5){
+        result.innerHTML = `<div class="small">No clear plate found. Try closer / better lighting.</div>`;
+        overlayText.textContent = "No plate";
+        setAlert("No clear plate detected. Try again (closer and steady).", "warn");
+        scanLock = false;
+        return;
+      }
+
+      const gate = document.getElementById("gateName").value || "Main Gate";
+      const eventType = document.getElementById("eventType").value;
+
+      let status = "rejected";
+      if(APPROVED_PLATES.has(plate)) status = "approved";
+
+      // Watchlist escalation
+      if(WATCHLIST_PLATES.has(plate)){
+        status = "rejected";
+        setAlert(`🚨 WATCHLIST vehicle detected: ${plate}`, "bad");
+      }else if(status === "approved"){
+        setAlert(`✅ Approved vehicle: ${plate}`, "info");
+      }else{
+        setAlert(`⚠️ Unknown/Rejected vehicle: ${plate}`, "warn");
+      }
+
+      result.innerHTML = `
+        <div><b>Detected Plate:</b> <span class="mono">${plate}</span></div>
+        <div class="small" style="margin-top:6px;">Raw OCR: <span class="mono">${normalizePlate(raw).slice(0,60)}</span></div>
+      `;
+
+      addLog({
+        plate, gate, eventType, status,
+        time: nowText()
+      });
+
+      overlayText.textContent = "Done";
+    }catch(e){
+      console.error(e);
+      setAlert("OCR failed. Try again or use a stronger device (PC/Android).", "bad");
+      overlayText.textContent = "Error";
+    }finally{
+      scanLock = false;
+    }
+  };
+
+  clearBtn.onclick = () => {
+    if(confirm("Clear demo logs on this device?")){
+      localStorage.removeItem("veh_demo_logs");
+      renderLogs();
+      setAlert("Demo logs cleared.", "info");
+    }
+  };
+
+  renderLogs();
+</script>
+</body>
+</html>
