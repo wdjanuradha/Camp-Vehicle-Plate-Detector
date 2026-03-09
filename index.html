@@ -3,47 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Guardian - Vehicle Plate Scanner</title>
+  <title>AI Guardian - Tactical Security Scanner</title>
   <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <style>
     /* --- MODERN MILITARY THEME --- */
     :root{
-      --bg-primary: #050a05;
-      --bg-secondary: #0f1f15;
-      --bg-card: rgba(20, 40, 25, 0.9);
-      --accent-main: #4caf50;
-      --accent-gold: #ffb300;
-      --accent-danger: #ff3333;
-      --text-primary: #e0e0e0;
-      --text-muted: #8da691;
-      --border-color: #2e5c3e;
-      --font-head: 'Black Ops One', cursive;
-      --font-body: 'Share Tech Mono', monospace;
-      --font-ui: 'Rajdhani', sans-serif;
+      --bg-primary: #050a05; --bg-secondary: #0f1f15; --bg-card: rgba(20, 40, 25, 0.9);
+      --accent-main: #4caf50; --accent-gold: #ffb300; --accent-danger: #ff3333;
+      --text-primary: #e0e0e0; --text-muted: #8da691; --border-color: #2e5c3e;
+      --font-head: 'Black Ops One', cursive; --font-body: 'Share Tech Mono', monospace; --font-ui: 'Rajdhani', sans-serif;
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family: var(--font-body); background-color: var(--bg-primary);
-      background-image: linear-gradient(rgba(0, 20, 0, 0.8), rgba(0, 10, 0, 0.9)), url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
-      color: var(--text-primary); min-height:100vh; padding:20px; overflow-x: hidden;
-    }
-
-    body::before {
-      content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-      z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
-    }
+    body{ font-family: var(--font-body); background-color: var(--bg-primary); background-image: linear-gradient(rgba(0, 20, 0, 0.8), rgba(0, 10, 0, 0.9)), url("https://www.transparenttextures.com/patterns/carbon-fibre.png"); color: var(--text-primary); min-height:100vh; padding:20px; overflow-x: hidden; }
+    body::before { content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none; }
 
     .container{max-width:1200px;margin:0 auto; position: relative; z-index: 10;}
 
-    .header{
-      background: linear-gradient(90deg, var(--bg-secondary) 0%, #1a3320 100%);
-      border-left: 5px solid var(--accent-gold); border-bottom: 2px solid var(--border-color);
-      padding:25px; margin-bottom:25px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;
-      box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
-    }
+    .header{ background: linear-gradient(90deg, var(--bg-secondary) 0%, #1a3320 100%); border-left: 5px solid var(--accent-gold); border-bottom: 2px solid var(--border-color); padding:25px; margin-bottom:25px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; box-shadow: 0 0 15px rgba(76, 175, 80, 0.2); }
     .header h1{ font-family: var(--font-head); font-size: 2em; color: var(--accent-main); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px var(--accent-main); }
     .header .small{ color: var(--text-muted); font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
@@ -72,14 +50,20 @@
     .danger{background: var(--accent-danger); color: #fff;} .danger:hover{background: #d32f2f; box-shadow: 0 0 15px rgba(244, 67, 54, 0.6);}
     .secondary{background: transparent; border: 1px solid var(--text-muted); color: var(--text-primary);} .secondary:hover{background: rgba(255,255,255,0.1); border-color: var(--accent-main); color: var(--accent-main);}
     .scan-btn{background: var(--accent-gold); color: #000;} .scan-btn:hover{background: #ffa000; box-shadow: 0 0 15px rgba(255, 179, 0, 0.6);}
+    .emergency-btn{background: #990000; color: #fff; font-weight:bold; border: 2px solid #ff3333; animation: pulse 2s infinite;} .emergency-btn:hover{background: #ff0000;}
     button:disabled{opacity:.4;cursor:not-allowed; pointer-events:none;}
 
-    .video-wrap{ position:relative; background:#000; overflow:hidden; border: 2px solid var(--border-color); box-shadow: 0 0 20px rgba(0,0,0,0.8); margin-top: 15px; display: flex; justify-content: center; align-items: center; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 51, 51, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0); } }
+
+    .video-wrap{ position:relative; background:#000; overflow:hidden; border: 2px solid var(--border-color); box-shadow: 0 0 20px rgba(0,0,0,0.8); margin-top: 15px; display: flex; justify-content: center; align-items: center; transition: filter 0.3s;}
     video, canvas{width:100%; height:auto; display:block} canvas{position:absolute; top:0; left:0; display:none;}
     .scan-guide { position: absolute; width: 70%; height: 35%; border: 2px solid rgba(255, 179, 0, 0.4); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); z-index: 2; pointer-events: none; }
     .scan-guide::before { content: ""; position: absolute; top: -2px; left: -2px; width: 30px; height: 30px; border-top: 4px solid var(--accent-main); border-left: 4px solid var(--accent-main); }
     .scan-guide::after { content: ""; position: absolute; bottom: -2px; right: -2px; width: 30px; height: 30px; border-bottom: 4px solid var(--accent-main); border-right: 4px solid var(--accent-main); }
     
+    /* FEATURE: Night Vision CSS */
+    .night-vision { filter: contrast(180%) brightness(150%) grayscale(100%); }
+
     .overlay{ position:absolute;top:12px;left:12px; background:rgba(0,0,0,0.7); border: 1px solid var(--accent-main); color: var(--accent-main); padding:5px 10px; font-family: var(--font-body); font-size: 0.8em; z-index: 10; }
     .alert{ margin-top:15px;padding:15px; display:flex; align-items:center; gap:10px; background: rgba(0, 20, 10, 0.9); border: 1px solid var(--accent-main); color: var(--accent-main); font-family: var(--font-body); }
     .alert.warn{border-color:var(--accent-gold); color:var(--accent-gold)} .alert.bad{border-color:var(--accent-danger); color:var(--accent-danger)}
@@ -92,16 +76,20 @@
     .pill{ display:inline-block;padding:4px 8px; font-size:.7rem; text-transform: uppercase; border: 1px solid transparent; font-family: var(--font-body); }
     .ok{background:rgba(76, 175, 80, 0.2); border-color: var(--accent-main); color:var(--accent-main)}
     .rej{background:rgba(244, 67, 54, 0.2); border-color: var(--accent-danger); color:var(--accent-danger)}
+    .wa-btn{background: #25D366; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; border: none; cursor:pointer;}
   </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
     <div>
-      <h1>🛡️ AI Guardian - Vehicle Scan</h1>
-      <div class="small">ස්වයංක්‍රීය අංක තහඩු හඳුනාගැනීම (OCR TACTICAL UNIT)</div>
+      <h1>🛡️ AI Guardian - Tactical Scan</h1>
+      <div class="small">ස්වයංක්‍රීය අංක තහඩු සහ ආරක්ෂක පද්ධතිය (ADVANCED TACTICAL UNIT)</div>
     </div>
-    <div class="badge" id="statusBadge">🔴 OFFLINE</div>
+    <div style="display:flex; gap:15px; align-items:center;">
+      <div class="small" id="gpsDisplay" style="color:var(--accent-gold); text-align:right;">📍 GPS: Searching...</div>
+      <div class="badge" id="statusBadge">🔴 OFFLINE</div>
+    </div>
   </div>
 
   <div class="grid">
@@ -134,13 +122,19 @@
       </div>
 
       <div class="btns">
-        <button id="startBtn" class="primary">🎥 කැමරාව අරඹන්න</button>
-        <button id="stopBtn" class="danger" disabled>⏹️ නවත්වන්න</button>
+        <button id="startBtn" class="primary">🎥 ආරම්භය (START)</button>
+        <button id="stopBtn" class="danger" disabled>⏹️ (STOP)</button>
         <button id="scanBtn" class="scan-btn">🔎 ස්කෑන් කරන්න</button>
         <button id="torchBtn" class="secondary" disabled>🔦 ආලෝකය</button> 
+        <button id="nightBtn" class="secondary">🌙 රාත්‍රී දර්ශනය</button>
       </div>
 
-      <div class="video-wrap">
+      <div style="margin-bottom: 15px; display:flex; align-items:center; gap:10px;">
+        <input type="checkbox" id="voiceToggle" checked style="width:20px; height:20px;">
+        <label for="voiceToggle" style="margin:0; color:var(--accent-main);">🗣️ හඬ දැනුම්දීම් ක්‍රියාත්මක කරන්න (Voice Alerts)</label>
+      </div>
+
+      <div class="video-wrap" id="videoWrap">
         <video id="video" autoplay muted playsinline></video>
         <canvas id="canvas"></canvas>
         <div class="scan-guide"></div>
@@ -148,21 +142,25 @@
       </div>
 
       <div id="msg" class="alert">
-        උපදෙස්: වාහනයේ වර්ගය තෝරා, අංක තහඩුව තිරයේ ඇති කොටුවට ගෙන 'ස්කෑන් කරන්න' ඔබන්න.
+        උපදෙස්: වාහනයේ අංක තහඩුව තිරයේ ඇති කොටුවට ගෙන 'ස්කෑන් කරන්න' ඔබන්න.
       </div>
+
+      <button id="panicBtn" class="emergency-btn" style="width:100%; margin-top:20px; font-size: 1.2em; padding: 15px;">
+        🚨 හදිසි අනතුරු ඇඟවීම (PANIC ALARM)
+      </button>
 
       <div style="margin-top: 30px; border-top: 1px dashed var(--border-color); padding-top: 20px;">
         <h2>⚙️ දත්ත සමුදාය (DATABASE SETTINGS)</h2>
         <div class="row-2">
           <div>
-            <label style="color:var(--accent-main)">අනුමත ලැයිස්තුවට එක් කරන්න (APPROVED)</label>
+            <label style="color:var(--accent-main)">අනුමත ලැයිස්තුවට එක් කරන්න</label>
             <div style="display:flex; gap:5px;">
               <input type="text" id="addApproveInput" placeholder="WP ABC-1234">
               <button id="addApproveBtn" class="primary" style="padding:10px;">ADD</button>
             </div>
           </div>
           <div>
-            <label style="color:var(--accent-danger)">අවධානම් ලැයිස්තුවට එක් කරන්න (WATCHLIST)</label>
+            <label style="color:var(--accent-danger)">අවධානම් ලැයිස්තුවට එක් කරන්න</label>
             <div style="display:flex; gap:5px;">
               <input type="text" id="addWatchInput" placeholder="WP 123-4567">
               <button id="addWatchBtn" class="danger" style="padding:10px;">ADD</button>
@@ -175,11 +173,7 @@
     <div class="card">
       <h2>📌 ස්කෑන් ප්‍රතිඵල (RESULTS)</h2>
       <div id="result" style="padding:15px; border:1px dashed var(--border-color); background: rgba(0,0,0,0.5);">
-        
-        <div id="scanResultContent">
-          <div class="small" style="color:var(--text-muted)">තවම දත්ත නැත (NO DATA)</div>
-        </div>
-
+        <div id="scanResultContent"><div class="small" style="color:var(--text-muted)">තවම දත්ත නැත (NO DATA)</div></div>
         <div id="editSection" style="display:none; margin-top:15px; padding-top:15px; border-top:1px dashed #2e5c3e;">
           <label>AI හඳුනාගත් අංකය නිවැරදිද? (VERIFY & EDIT)</label>
           <div style="display:flex; gap:10px; margin-top:5px;">
@@ -190,7 +184,7 @@
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:25px; margin-bottom: 10px;">
-        <h2 style="margin:0; border:none; padding:0;">🧾 දෛනික වාර්තා (LOGS)</h2>
+        <h2 style="margin:0; border:none; padding:0;">🧾 වාර්තා (LOGS)</h2>
         <button id="exportCsvBtn" class="secondary" style="padding:6px 12px; font-size:0.8em;">📥 CSV බාගන්න</button>
       </div>
 
@@ -198,21 +192,19 @@
         <table>
           <thead>
             <tr>
-              <th>#</th>
               <th>අංකය</th>
-              <th>වර්ගය</th>
-              <th>ගේට්ටුව</th>
+              <th>විස්තර</th>
               <th>තත්ත්වය</th>
-              <th>වේලාව</th>
+              <th>ස්ථානය (GPS)</th>
+              <th>ක්‍රියාව</th>
             </tr>
           </thead>
           <tbody id="logBody">
-            <tr><td colspan="6" class="small" style="padding:14px; text-align:center;">තවම වාර්තා නොමැත.</td></tr>
+            <tr><td colspan="5" class="small" style="padding:14px; text-align:center;">තවම වාර්තා නොමැත.</td></tr>
           </tbody>
         </table>
       </div>
-      
-      <button id="clearBtn" class="danger" style="width:100%; margin-top:15px;">🧹 සියලු වාර්තා මකන්න (CLEAR ALL LOGS)</button>
+      <button id="clearBtn" class="danger" style="width:100%; margin-top:15px;">🧹 සියලු වාර්තා මකන්න (CLEAR LOGS)</button>
     </div>
   </div>
 </div>
@@ -220,7 +212,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
-  // --- FEATURE 3: Dynamic Watchlist/Approved DB (Stored in LocalStorage) ---
+  // --- DATABASE ---
   let APPROVED_PLATES = new Set(JSON.parse(localStorage.getItem("ai_approved") || '["WP ABC-1234", "CP AB-7788", "NP 123-9001"]'));
   let WATCHLIST_PLATES = new Set(JSON.parse(localStorage.getItem("ai_watchlist") || '["WP 000-0007", "SP 12-6666"]'));
 
@@ -239,44 +231,60 @@
     if(val.length > 3) { WATCHLIST_PLATES.add(val); saveDatabases(); document.getElementById("addWatchInput").value = ""; setAlert(`🚨 ${val} අවධානම් ලැයිස්තුවට එක් කරන ලදී!`, "bad"); playBeep("bad");}
   };
 
-  // --- FEATURE 2: Web Audio API (Synthesized Beeps/Alarms) ---
+  // --- AUDIO & TTS ---
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  let sirenInterval = null;
+
   function playBeep(type) {
     if(audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+    const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
     
     if(type === "ok") {
-      // Pleasant double beep
       osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.1);
       gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
       osc.start(); osc.stop(audioCtx.currentTime + 0.3);
     } else if (type === "bad") {
-      // Harsh buzzer alarm
       osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
       gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
       osc.start(); osc.stop(audioCtx.currentTime + 0.5);
     } else {
-      // Standard click/scan beep
       osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
       gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
       osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
   }
 
-  let stream = null; let videoTrack = null; let torchOn = false; let scanLock = false;
+  function speakAlert(text) {
+    if(!document.getElementById("voiceToggle").checked) return;
+    window.speechSynthesis.cancel();
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.rate = 0.9; msg.pitch = 1.1; msg.lang = 'en-US';
+    window.speechSynthesis.speak(msg);
+  }
+
+  // --- GPS LOCATION ---
+  let currentLat = "0.00"; let currentLng = "0.00";
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition((pos) => {
+      currentLat = pos.coords.latitude.toFixed(6); currentLng = pos.coords.longitude.toFixed(6);
+      document.getElementById("gpsDisplay").textContent = `📍 GPS: ${currentLat}, ${currentLng}`;
+    }, (err) => {
+      document.getElementById("gpsDisplay").textContent = "📍 GPS: Disabled/Error";
+    });
+  }
+
+  // --- STATE ---
+  let stream = null; let videoTrack = null; let torchOn = false; let nightMode = false; let scanLock = false;
   const video = document.getElementById("video"); const canvas = document.getElementById("canvas"); const ctx = canvas.getContext("2d");
   const overlayText = document.getElementById("overlayText"); const statusBadge = document.getElementById("statusBadge"); const msg = document.getElementById("msg");
-  
   const scanResultContent = document.getElementById("scanResultContent"); const editSection = document.getElementById("editSection");
   const manualPlateInput = document.getElementById("manualPlateInput"); const confirmPlateBtn = document.getElementById("confirmPlateBtn");
   const logBody = document.getElementById("logBody");
   const startBtn = document.getElementById("startBtn"); const stopBtn = document.getElementById("stopBtn"); const scanBtn = document.getElementById("scanBtn");
-  const torchBtn = document.getElementById("torchBtn");
+  const torchBtn = document.getElementById("torchBtn"); const nightBtn = document.getElementById("nightBtn"); const panicBtn = document.getElementById("panicBtn");
 
-  function nowText(){ return new Date().toLocaleString("si-LK"); }
+  function nowText(){ return new Date().toLocaleString("en-GB"); }
   function setAlert(text, type="info"){ msg.className = "alert" + (type==="warn" ? " warn" : type==="bad" ? " bad" : ""); msg.textContent = text; }
 
   function extractPlateNumber(rawText) {
@@ -293,38 +301,38 @@
   function saveLogs(logs){ localStorage.setItem("veh_demo_logs", JSON.stringify(logs)); }
   function renderLogs(){
     const logs = loadLogs();
-    if(!logs.length){ logBody.innerHTML = `<tr><td colspan="6" class="small" style="padding:14px; text-align:center;">තවම වාර්තා නොමැත (NO LOGS YET).</td></tr>`; return; }
-    logBody.innerHTML = logs.map((l,i)=>`
+    if(!logs.length){ logBody.innerHTML = `<tr><td colspan="5" class="small" style="padding:14px; text-align:center;">තවම වාර්තා නොමැත (NO LOGS).</td></tr>`; return; }
+    logBody.innerHTML = logs.map((l)=>`
       <tr>
-        <td>${i+1}</td>
         <td class="mono" style="font-weight:bold; color:var(--text-primary);">${l.plate}</td>
-        <td><span class="small">${l.vehType}</span><br><span class="small" style="color:var(--accent-gold)">[${l.eventType}]</span></td>
-        <td>${l.gate}</td>
-        <td>${l.status === "approved" ? `<span class="pill ok">CLEARED</span>` : `<span class="pill rej">DENIED</span>`}</td>
-        <td class="small">${l.time}</td>
+        <td><span class="small">${l.vehType} - ${l.gate}</span><br><span class="small" style="color:var(--accent-gold)">[${l.eventType}] ${l.time}</span></td>
+        <td>${l.status === "approved" ? `<span class="pill ok">CLEARED</span>` : l.status === "emergency" ? `<span class="pill rej" style="background:red; color:white;">EMERGENCY</span>` : `<span class="pill rej">DENIED</span>`}</td>
+        <td><a href="${l.mapsLink}" target="_blank" style="color:var(--accent-main); text-decoration:none;">📍 Map</a></td>
+        <td>
+          <button class="wa-btn" onclick="shareWhatsApp('${l.plate}', '${l.status}', '${l.mapsLink}')">Share</button>
+        </td>
       </tr>
     `).join("");
   }
-  function addLog(entry){ const logs = loadLogs(); logs.unshift(entry); saveLogs(logs.slice(0,500)); renderLogs(); }
+  function addLog(entry){ const logs = loadLogs(); logs.unshift(entry); saveLogs(logs.slice(0,200)); renderLogs(); }
 
-  // ====== Camera & Torch ======
+  // --- WHATSAPP SHARE FEATURE ---
+  window.shareWhatsApp = function(plate, status, mapsLink) {
+    let msg = `*AI GUARDIAN REPORT*\nPlate: ${plate}\nStatus: ${status.toUpperCase()}\nLocation: ${mapsLink}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  // ====== Camera Controls ======
   startBtn.onclick = async () => {
     try{
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-      video.srcObject = stream;
-      videoTrack = stream.getVideoTracks()[0];
-      
-      // FEATURE 5 Enable Flashlight if supported
-      const capabilities = videoTrack.getCapabilities();
-      if(capabilities.torch) { torchBtn.disabled = false; }
-
+      video.srcObject = stream; videoTrack = stream.getVideoTracks()[0];
+      if(videoTrack.getCapabilities().torch) { torchBtn.disabled = false; }
       startBtn.disabled = true; stopBtn.disabled = false;
-      statusBadge.textContent = "🟢 ONLINE"; statusBadge.classList.add("on");
-      overlayText.textContent = "OPTICS ONLINE";
-      setAlert("කැමරාව ආරම්භ විය. වාහනයේ අංක තහඩුව තිරයේ ඇති කොටුවට ගෙන 'ස්කෑන් කරන්න' ඔබන්න.", "info");
-      playBeep("scan"); // startup sound
+      statusBadge.textContent = "🟢 ONLINE"; statusBadge.classList.add("on"); overlayText.textContent = "OPTICS ONLINE";
+      setAlert("කැමරාව ආරම්භ විය. ස්කෑන් කරන්න.", "info"); playBeep("scan");
     }catch(e){
-      console.error(e); setAlert("කැමරාව ක්‍රියාත්මක කළ නොහැක. Permissions පරීක්ෂා කරන්න.", "bad");
+      console.error(e); setAlert("කැමරාව ක්‍රියාත්මක කළ නොහැක.", "bad");
     }
   };
 
@@ -336,107 +344,92 @@
 
   torchBtn.onclick = async () => {
     if(!videoTrack) return;
-    try {
-      torchOn = !torchOn;
-      await videoTrack.applyConstraints({ advanced: [{ torch: torchOn }] });
-      torchBtn.style.background = torchOn ? "var(--accent-gold)" : "transparent";
-      torchBtn.style.color = torchOn ? "#000" : "var(--text-primary)";
-    } catch (err) { console.error("Torch error", err); }
+    try { torchOn = !torchOn; await videoTrack.applyConstraints({ advanced: [{ torch: torchOn }] }); torchBtn.style.color = torchOn ? "var(--accent-gold)" : "var(--text-primary)"; } catch (err) {}
+  };
+
+  nightBtn.onclick = () => {
+    nightMode = !nightMode;
+    document.getElementById("videoWrap").className = nightMode ? "video-wrap night-vision" : "video-wrap";
+    nightBtn.style.color = nightMode ? "var(--accent-gold)" : "var(--text-primary)";
+  }
+
+  // --- EMERGENCY PANIC BUTTON ---
+  panicBtn.onclick = () => {
+    if(sirenInterval) {
+      clearInterval(sirenInterval); sirenInterval = null; panicBtn.textContent = "🚨 හදිසි අනතුරු ඇඟවීම (PANIC ALARM)";
+      setAlert("හදිසි තත්වය අක්‍රිය කරන ලදී.", "info"); speakAlert("Emergency cancelled.");
+    } else {
+      panicBtn.textContent = "⏹️ නවත්වන්න (STOP ALARM)";
+      setAlert("🚨 EMERGENCY TRIGGERED! Location logged.", "bad");
+      speakAlert("Warning! Security Breach! Emergency alarm activated.");
+      sirenInterval = setInterval(() => { playBeep("bad"); }, 800);
+      
+      let mapsLink = `https://www.google.com/maps/search/?api=1&query=${currentLat},${currentLng}`;
+      addLog({ plate: "EMERGENCY ALERT", vehType: "Unknown", gate: document.getElementById("gateName").value, eventType: "BREACH", status: "emergency", time: nowText(), mapsLink: mapsLink });
+    }
   };
 
   video.addEventListener("loadeddata", () => { canvas.width = video.videoWidth || 640; canvas.height = video.videoHeight || 480; });
 
   // ====== OCR Scan ======
   scanBtn.onclick = async () => {
-    if(!stream){ setAlert("කරුණාකර පළමුව කැමරාව ආරම්භ කරන්න.", "warn"); return; }
-    if(scanLock) return; scanLock = true;
-    playBeep("scan");
-
-    overlayText.textContent = "SCANNING..."; setAlert("ස්කෑන් වෙමින් පවතී... කැමරාව නොසොල්වා තබාගන්න.", "info");
-    editSection.style.display = "none";
+    if(!stream){ setAlert("පළමුව කැමරාව ආරම්භ කරන්න.", "warn"); return; }
+    if(scanLock) return; scanLock = true; playBeep("scan");
+    overlayText.textContent = "SCANNING..."; setAlert("ස්කෑන් වෙමින් පවතී...", "info"); editSection.style.display = "none";
 
     const cropWidth = canvas.width * 0.7; const cropHeight = canvas.height * 0.35;
     const cropX = (canvas.width - cropWidth) / 2; const cropY = (canvas.height - cropHeight) / 2;
-
     const tempCanvas = document.createElement("canvas"); tempCanvas.width = cropWidth; tempCanvas.height = cropHeight;
-    const tempCtx = tempCanvas.getContext("2d");
-    tempCtx.drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+    tempCanvas.getContext("2d").drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
 
     try{
       const { data } = await Tesseract.recognize(tempCanvas, "eng", { logger: ()=>{} });
       const raw = data.text || ""; const plate = extractPlateNumber(raw);
 
       if(plate.length < 3){
-        scanResultContent.innerHTML = `<div class="small" style="color:var(--accent-danger)">පැහැදිලි අංක තහඩුවක් හඳුනාගැනීමට නොහැකි විය. අතින් ඇතුලත් කරන්න.</div>`;
-        manualPlateInput.value = "";
+        scanResultContent.innerHTML = `<div class="small" style="color:var(--accent-danger)">පැහැදිලි නැත. අතින් ඇතුලත් කරන්න.</div>`;
+        manualPlateInput.value = ""; speakAlert("Plate not detected.");
       } else {
-        scanResultContent.innerHTML = `<div style="font-size: 1.1em; color: var(--text-primary);"><b>මූලික හඳුනාගැනීම:</b> <span class="mono" style="font-size: 1.2em;">${plate}</span></div>`;
-        manualPlateInput.value = plate;
+        scanResultContent.innerHTML = `<div style="font-size: 1.1em;"><b>හඳුනාගැනීම:</b> <span class="mono">${plate}</span></div>`;
+        manualPlateInput.value = plate; speakAlert("Plate scanned. Please verify.");
       }
 
-      editSection.style.display = "block"; manualPlateInput.focus();
-      setAlert("කරුණාකර අංකය නිවැරදිදැයි පරීක්ෂා කර 'තහවුරු කරන්න' ඔබන්න.", "warn");
-      overlayText.textContent = "AWAITING CONFIRMATION";
-    }catch(e){
-      console.error(e); setAlert("OCR දෝෂයකි. නැවත උත්සාහ කරන්න.", "bad"); overlayText.textContent = "ERROR";
-    }finally{
-      scanLock = false;
-    }
+      editSection.style.display = "block"; manualPlateInput.focus(); overlayText.textContent = "VERIFY";
+    }catch(e){ setAlert("OCR දෝෂයකි.", "bad"); }finally{ scanLock = false; }
   };
 
   // ====== Confirm & Save Log ======
   confirmPlateBtn.onclick = () => {
     let finalPlate = manualPlateInput.value.toUpperCase().replace(/[^A-Z0-9- ]/g, "").trim();
-    if(finalPlate.length < 4){ setAlert("කරුණාකර නිවැරදි අංක තහඩුවක් ඇතුලත් කරන්න.", "bad"); return; }
+    if(finalPlate.length < 4){ setAlert("නිවැරදි අංකයක් ඇතුලත් කරන්න.", "bad"); return; }
 
-    const gate = document.getElementById("gateName").value || "Main Gate";
-    const eventType = document.getElementById("eventType").value;
-    const vehType = document.getElementById("vehType").value; // FEATURE 4
-
-    let status = "rejected";
-    if(APPROVED_PLATES.has(finalPlate)) status = "approved";
+    const gate = document.getElementById("gateName").value || "Gate"; const eventType = document.getElementById("eventType").value; const vehType = document.getElementById("vehType").value;
+    let mapsLink = `https://www.google.com/maps/search/?api=1&query=${currentLat},${currentLng}`;
+    let status = "rejected"; if(APPROVED_PLATES.has(finalPlate)) status = "approved";
 
     if(WATCHLIST_PLATES.has(finalPlate)){
-      status = "rejected"; setAlert(`🚨 අවධානයට ලක්වූ වාහනයක් (WATCHLIST DETECTED): ${finalPlate}`, "bad");
-      playBeep("bad"); // FEATURE 2 Alarm
+      status = "rejected"; setAlert(`🚨 අවධානම් වාහනයක්: ${finalPlate}`, "bad"); playBeep("bad"); speakAlert(`Warning! ${finalPlate} is on the watchlist.`);
     }else if(status === "approved"){
-      setAlert(`✅ අනුමත වාහනයක් (ACCESS GRANTED): ${finalPlate}`, "info");
-      playBeep("ok"); // FEATURE 2 Success
+      setAlert(`✅ අනුමත වාහනයක්: ${finalPlate}`, "info"); playBeep("ok"); speakAlert(`Access granted for ${finalPlate}.`);
     }else{
-      setAlert(`⚠️ හඳුනානොගත් වාහනයක් (UNKNOWN VEHICLE): ${finalPlate}`, "warn");
-      playBeep("scan");
+      setAlert(`⚠️ හඳුනානොගත් වාහනයක්: ${finalPlate}`, "warn"); playBeep("scan"); speakAlert(`Unknown vehicle. ${finalPlate}.`);
     }
 
-    addLog({ plate: finalPlate, vehType, gate, eventType, status, time: nowText() });
-    editSection.style.display = "none";
-    scanResultContent.innerHTML = `<div style="font-size: 1.1em; color: var(--accent-main);"><b>✅ සාර්ථකව සටහන් විය:</b> <span class="mono">${finalPlate}</span></div>`;
-    overlayText.textContent = "LOG SAVED";
+    addLog({ plate: finalPlate, vehType, gate, eventType, status, time: nowText(), mapsLink: mapsLink });
+    editSection.style.display = "none"; scanResultContent.innerHTML = `<div style="color: var(--accent-main);"><b>✅ සටහන් විය:</b> <span class="mono">${finalPlate}</span></div>`;
   };
 
-  // --- FEATURE 1: CSV Export ---
   document.getElementById("exportCsvBtn").onclick = () => {
-    const logs = loadLogs();
-    if(!logs.length) { setAlert("බාගත කිරීමට වාර්තා නොමැත! (No logs to export)", "warn"); return; }
-    
-    let csvContent = "ID,Plate_Number,Vehicle_Type,Gate,Action,Status,Time\n";
-    logs.forEach((l, idx) => { csvContent += `${idx+1},${l.plate},${l.vehType},${l.gate},${l.eventType},${l.status},"${l.time}"\n`; });
-    
+    const logs = loadLogs(); if(!logs.length) return;
+    let csvContent = "Plate,Type,Gate,Action,Status,Time,GPS_Link\n";
+    logs.forEach((l) => { csvContent += `${l.plate},${l.vehType},${l.gate},${l.eventType},${l.status},"${l.time}","${l.mapsLink}"\n`; });
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `AI_Guardian_Logs_${new Date().getTime()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setAlert("වාර්තා සාර්ථකව බාගත කරන ලදී! (Export successful)", "info");
+    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `AI_Guardian_Logs.csv`;
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
   };
 
   document.getElementById("clearBtn").onclick = () => {
-    if(confirm("මෙම උපාංගයේ ඇති සියලුම වාර්තා මකා දැමීමට අවශ්‍යද?")){
-      localStorage.removeItem("veh_demo_logs"); renderLogs(); setAlert("සියලු වාර්තා මකා දමන ලදී (LOGS CLEARED).", "info");
-      scanResultContent.innerHTML = `<div class="small">තවම දත්ත නැත (NO DATA)</div>`; editSection.style.display = "none";
-    }
+    if(confirm("සියලුම වාර්තා මකා දැමීමට අවශ්‍යද?")){ localStorage.removeItem("veh_demo_logs"); renderLogs(); editSection.style.display = "none"; }
   };
 
   renderLogs();
